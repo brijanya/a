@@ -2,6 +2,15 @@
     const STORAGE_KEY = "recent_pages_history";
     const MAX_ITEMS = 7;
 
+    // Get the current page filename safely, handling repo root URLs like /a/ or /a
+    function getCurrentPageUrl() {
+        let filename = window.location.pathname.split("/").pop() || "index.html";
+        if (!filename.includes(".")) {
+            filename = "index.html";
+        }
+        return filename;
+    }
+
     // Detect a clean, human-readable title for the current page
     function getPageTitle() {
         const heading = document.querySelector("main h1, main h2");
@@ -9,7 +18,7 @@
             return heading.textContent.trim();
         }
 
-        const filename = window.location.pathname.split("/").pop() || "index.html";
+        const filename = getCurrentPageUrl();
         if (document.title) {
             const cleanTitle = document.title.split("-")[0].trim();
             if (cleanTitle && (filename === "index.html" || cleanTitle.toLowerCase() !== "home")) {
@@ -28,7 +37,7 @@
 
     // Update the history list in localStorage
     function updateHistory() {
-        const currentUrl = window.location.pathname.split("/").pop() || "index.html";
+        const currentUrl = getCurrentPageUrl();
         const currentTitle = getPageTitle();
 
         let history = [];
